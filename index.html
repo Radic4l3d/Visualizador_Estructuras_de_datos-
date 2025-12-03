@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estructuras de Datos - Visualizador</title>
+    
+    <!-- Importamos Firebase desde CDN (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <!-- Vínculo a nuestra hoja de estilos -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <!-- Icono SVG simple -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="M2 15h10"/><path d="M9 18l3-3-3-3"/></svg>
+            <h1>Visualizador<span>DataStructs</span></h1>
+        </div>
+        <nav>
+            <button class="nav-btn active" onclick="App.navigate('pila', event)">Pila (Stack)</button>
+            <button class="nav-btn" onclick="App.navigate('cola', event)">Cola (Queue)</button>
+            <button class="nav-btn" onclick="App.navigate('lista', event)">Lista (Linked List)</button>
+        </nav>
+    </header>
+
+    <main>
+        
+        <!-- === SECCIÓN PILA (IMPLEMENTADA) === -->
+        <section id="pila-section" class="section-container active">
+            <!-- Panel de Controles -->
+            <div class="control-panel">
+                <div class="card">
+                    <h3>Operaciones Pila</h3>
+                    <div class="input-group">
+                        <input type="number" id="stack-input" placeholder="Valor (int)" onkeypress="if(event.key === 'Enter') App.pushStack()">
+                        <button class="btn-primary" onclick="App.pushStack()">Push</button>
+                    </div>
+                    <button class="btn-danger" onclick="App.popStack()">Pop</button>
+                    
+                    <div class="separator"></div>
+
+                    <div class="input-group-row">
+                        <button class="btn-secondary" onclick="App.saveStack()">💾 Guardar</button>
+                        <button class="btn-secondary" onclick="App.loadStack()">📂 Cargar</button>
+                    </div>
+                    <button class="btn-secondary full-width" onclick="App.resetStack()">🔄 Nueva Pila</button>
+                    
+                    <div id="stack-status" class="status-bar">Sistema listo</div>
+                </div>
+
+                <!-- Panel de Código C -->
+                <div class="card code-card">
+                    <h3>Código C Ejecutado:</h3>
+                    <div id="code-output" class="code-display">// Esperando operación...</div>
+                </div>
+            </div>
+
+            <!-- Panel Visual (Animación) -->
+            <div id="visual-area" class="visual-panel">
+                <div id="stack-container">
+                    <!-- Los nodos se insertarán aquí dinámicamente -->
+                </div>
+                <!-- Etiquetas de guía -->
+                <div class="label-bottom">INICIO (Fondo)</div>
+                <div class="label-top">FIN (Tope)</div>
+            </div>
+        </section>
+
+        <!-- === SECCIÓN COLA (PENDIENTE) === -->
+        <section id="cola-section" class="section-container">
+            <div class="visual-panel empty-state">
+                <div class="placeholder-text">
+                    🚧 Módulo de Cola (Queue)<br>
+                    <span>Pendiente de implementación</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- === SECCIÓN LISTA (PENDIENTE) === -->
+        <section id="lista-section" class="section-container">
+            <div class="visual-panel empty-state">
+                <div class="placeholder-text">
+                    🚧 Módulo de Lista Enlazada<br>
+                    <span>Pendiente de implementación</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Lógica de la aplicación -->
+    <script src="script.js"></script>
+</body>
+</html>
+
+
