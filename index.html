@@ -3,85 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estructuras de Datos - Visualizador</title>
-    
-    <!-- Importamos Firebase desde CDN (Compat) -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
-    <!-- Vínculo a nuestra hoja de estilos -->
+    <title>Visualizador de Estructuras de Datos</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
     <header>
         <div class="logo-area">
-            <!-- Icono SVG simple -->
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="M2 15h10"/><path d="M9 18l3-3-3-3"/></svg>
-            <h1>Visualizador<span>DataStructs</span></h1>
+            <h1>DataStructs<span>4CM2</span></h1>
         </div>
         <nav>
-            <button class="nav-btn active" onclick="App.navigate('pila', event)">Pila (Stack)</button>
-            <button class="nav-btn" onclick="App.navigate('cola', event)">Cola (Queue)</button>
-            <button class="nav-btn" onclick="App.navigate('lista', event)">Lista (Linked List)</button>
+            <button class="nav-btn active" onclick="App.navigate('pila', event)">Pila (LIFO)</button>
+            <button class="nav-btn" onclick="App.navigate('cola', event)">Cola (FIFO)</button>
+            <button class="nav-btn" onclick="App.navigate('lista', event)">Lista</button>
         </nav>
     </header>
 
     <main>
         
-        <!-- === SECCIÓN PILA (IMPLEMENTADA) === -->
+        <!-- === SECCIÓN PILA (Stack) === -->
         <section id="pila-section" class="section-container active">
-            <!-- Panel de Controles -->
             <div class="control-panel">
                 <div class="card">
                     <h3>Operaciones Pila</h3>
                     <div class="input-group">
-                        <input type="number" id="stack-input" placeholder="Valor (int)" onkeypress="if(event.key === 'Enter') App.pushStack()">
-                        <button class="btn-primary" onclick="App.pushStack()">Push</button>
+                        <input type="number" id="stack-input" placeholder="Valor (int)" onkeypress="if(event.key === 'Enter') App.pila.push()">
+                        <button class="btn-primary" onclick="App.pila.push()">Push</button>
                     </div>
-                    <button class="btn-danger" onclick="App.popStack()">Pop</button>
+                    <button class="btn-danger" onclick="App.pila.pop()">Pop</button>
                     
                     <div class="separator"></div>
 
                     <div class="input-group-row">
-                        <button class="btn-secondary" onclick="App.saveStack()">💾 Guardar</button>
-                        <button class="btn-secondary" onclick="App.loadStack()">📂 Cargar</button>
+                        <button class="btn-secondary" onclick="App.pila.save()">💾 Guardar</button>
+                        <button class="btn-secondary" onclick="App.pila.load()">📂 Cargar</button>
                     </div>
-                    <button class="btn-secondary full-width" onclick="App.resetStack()">🔄 Nueva Pila</button>
+                    <button class="btn-secondary full-width" onclick="App.pila.reset()">🗑️ Limpiar Pila</button>
                     
-                    <div id="stack-status" class="status-bar">Sistema listo</div>
+                    <div id="stack-status" class="status-bar">Listo</div>
                 </div>
 
-                <!-- Panel de Código C -->
                 <div class="card code-card">
-                    <h3>Código C Ejecutado:</h3>
-                    <div id="code-output" class="code-display">// Esperando operación...</div>
+                    <h3>Código C (Pila):</h3>
+                    <div id="stack-code" class="code-display">// Selecciona operación...</div>
                 </div>
             </div>
 
-            <!-- Panel Visual (Animación) -->
-            <div id="visual-area" class="visual-panel">
-                <div id="stack-container">
-                    <!-- Los nodos se insertarán aquí dinámicamente -->
-                </div>
-                <!-- Etiquetas de guía -->
+            <div class="visual-panel">
+                <div id="stack-container"></div>
                 <div class="label-bottom">INICIO (Fondo)</div>
                 <div class="label-top">FIN (Tope)</div>
             </div>
         </section>
 
-        <!-- === SECCIÓN COLA (PENDIENTE) === -->
+        <!-- === SECCIÓN COLA (Queue) === -->
         <section id="cola-section" class="section-container">
-            <div class="visual-panel empty-state">
-                <div class="placeholder-text">
-                    🚧 Módulo de Cola (Queue)<br>
-                    <span>Pendiente de implementación</span>
+            <div class="control-panel">
+                <div class="card">
+                    <h3>Operaciones Cola</h3>
+                    <div class="input-group">
+                        <input type="number" id="queue-input" placeholder="Valor (int)" onkeypress="if(event.key === 'Enter') App.cola.enqueue()">
+                        <button class="btn-primary" onclick="App.cola.enqueue()">Enqueue</button>
+                    </div>
+                    <button class="btn-danger" onclick="App.cola.dequeue()">Dequeue</button>
+                    
+                    <div class="separator"></div>
+
+                    <div class="input-group-row">
+                        <button class="btn-secondary" onclick="App.cola.save()">💾 Guardar</button>
+                        <button class="btn-secondary" onclick="App.cola.load()">📂 Cargar</button>
+                    </div>
+                    <button class="btn-secondary full-width" onclick="App.cola.reset()">🗑️ Limpiar Cola</button>
+                    
+                    <div id="queue-status" class="status-bar">Listo</div>
                 </div>
+
+                <div class="card code-card">
+                    <h3>Código C (Cola):</h3>
+                    <div id="queue-code" class="code-display">// Selecciona operación...</div>
+                </div>
+            </div>
+
+            <div class="visual-panel">
+                <!-- Contenedor Horizontal -->
+                <div id="queue-container"></div>
+                <div class="label-left">INICIO (Frente)</div>
+                <div class="label-right">FIN (Final)</div>
             </div>
         </section>
 
-        <!-- === SECCIÓN LISTA (PENDIENTE) === -->
+        <!-- === SECCIÓN LISTA (Pendiente) === -->
         <section id="lista-section" class="section-container">
             <div class="visual-panel empty-state">
                 <div class="placeholder-text">
@@ -93,7 +104,6 @@
 
     </main>
 
-    <!-- Lógica de la aplicación -->
     <script src="script.js"></script>
 </body>
 </html>

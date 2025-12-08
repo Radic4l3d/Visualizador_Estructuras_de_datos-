@@ -1,231 +1,198 @@
-// --- 1. CONFIGURACIÓN DE FIREBASE ---
-let db, auth, user;
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'demo-structs';
+// --- LÓGICA DE LA APLICACIÓN ---
 
-// Intentar inicializar Firebase con las variables del entorno
-try {
-    if (typeof __firebase_config !== 'undefined') {
-        const firebaseConfig = JSON.parse(__firebase_config);
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
-        auth = firebase.auth();
-        
-        // Autenticación Anónima para persistencia por usuario
-        auth.signInAnonymously().then((u) => {
-            user = u.user;
-            console.log("Usuario autenticado:", user.uid);
-            App.setStatus("✅ Conectado al servidor");
-        });
-    } else {
-        console.warn("Configuración de Firebase no encontrada. Modo Offline.");
-    }
-} catch (e) {
-    console.warn("Error inicializando Firebase:", e);
-}
-
-// --- 2. LÓGICA DE LA APLICACIÓN (Patrón Módulo) ---
 const App = {
+    // Estado en memoria
     state: {
-        pila: [] // Array simple como fuente de verdad
+        pila: [],
+        cola: []
     },
 
-    // --- Navegación entre pestañas ---
+    // Navegación
     navigate: (section, event) => {
-        // Actualizar botones del menú
+        // Estilos botones
         document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
         if(event) event.target.classList.add('active');
-
-        // Mostrar sección correspondiente
+        
+        // Mostrar sección
         document.querySelectorAll('.section-container').forEach(sec => sec.classList.remove('active'));
         document.getElementById(`${section}-section`).classList.add('active');
     },
 
-    // --- Helpers de UI ---
-    setStatus: (msg) => {
-        document.getElementById('stack-status').innerText = msg;
-    },
+    // ==========================================
+    // MÓDULO PILA (LIFO)
+    // ==========================================
+    pila: {
+        push: () => {
+            const input = document.getElementById('stack-input');
+            const val = input.value.trim();
+            if (!val) return alert("Ingresa un valor");
 
-    setCode: (code) => {
-        const el = document.getElementById('code-output');
-        el.innerText = code;
-        el.scrollTop = 0;
-    },
+            // 1. Lógica
+            App.state.pila.push(val);
 
-    // --- OPERACIONES DE PILA ---
-
-    pushStack: () => {
-        const input = document.getElementById('stack-input');
-        const val = input.value.trim();
-        
-        if (!val) {
-            alert("Por favor ingrese un valor numérico");
-            return;
-        }
-
-        // 1. Actualizar Estado
-        App.state.pila.push(val);
-
-        // 2. Renderizar Visualmente
-        App.renderPush(val);
-
-        // 3. Generar Código C explicativo
-        App.setCode(`void push(int valor) {
-    // 1. Reservar memoria
-    Nodo* nuevo = (Nodo*)malloc(sizeof(Nodo));
-    
-    // 2. Asignar datos
-    nuevo->dato = ${val};
-    
-    // 3. El nuevo nodo apunta al antiguo tope
-    nuevo->siguiente = tope;
-    
-    // 4. Actualizar el puntero tope
-    tope = nuevo;
-    
-    printf("Elemento %d apilado", valor);
-}`);
-        
-        // Limpieza
-        input.value = '';
-        input.focus();
-        App.setStatus(`Elemento ${val} apilado`);
-    },
-
-    popStack: () => {
-        if (App.state.pila.length === 0) {
-            alert("Error: La pila está vacía (Stack Underflow)");
-            App.setCode(`int pop() {
-    if (tope == NULL) {
-        printf("Stack Underflow\\n");
-        return -1;
-    }
-    // ...
-}`);
-            return;
-        }
-
-        // 1. Obtener valor a eliminar
-        const val = App.state.pila[App.state.pila.length - 1];
-
-        // 2. Animar Salida en el DOM
-        const container = document.getElementById('stack-container');
-        // Importante: Como usamos column-reverse, el último elemento visual (Tope) 
-        // es el último hijo del contenedor DOM.
-        const node = container.lastElementChild; 
-        
-        if (node) {
-            // Activar clase CSS de salida
-            node.classList.add('removing');
-            
-            // Esperar a que termine la animación (400ms) antes de eliminar lógica
-            setTimeout(() => {
-                App.state.pila.pop(); // Eliminar del array
-                node.remove();        // Eliminar del DOM
-                App.setStatus(`Elemento ${val} eliminado`);
-            }, 400);
-        }
-
-        // 3. Mostrar Código C
-        App.setCode(`int pop() {
-    if (tope == NULL) return -1;
-
-    Nodo* temp = tope;     // tope apunta al nodo [${val}]
-    int valor = temp->dato;
-    
-    // El tope baja al siguiente nodo
-    tope = tope->siguiente;
-    
-    free(temp); // Liberar memoria
-    return valor;
-}`);
-    },
-
-    // --- RENDERIZADO ---
-    
-    renderPush: (val) => {
-        const container = document.getElementById('stack-container');
-        
-        const node = document.createElement('div');
-        node.className = 'stack-node';
-        node.innerText = val;
-        
-        // Simplemente agregamos al final (appendChild).
-        // CSS flex-direction: column-reverse se encarga de ponerlo arriba.
-        container.appendChild(node);
-    },
-
-    renderFullStack: () => {
-        const container = document.getElementById('stack-container');
-        container.innerHTML = ''; // Limpiar todo
-        
-        App.state.pila.forEach(val => {
+            // 2. Visual (Insertar al final, CSS column-reverse lo pone arriba)
             const node = document.createElement('div');
             node.className = 'stack-node';
-            // Quitamos la animación de entrada si estamos cargando masivamente
-            // node.style.animation = 'none'; 
             node.innerText = val;
-            container.appendChild(node);
-        });
-    },
+            document.getElementById('stack-container').appendChild(node);
 
-    resetStack: () => {
-        if(confirm("¿Desea limpiar la pila actual?")) {
+            // 3. Código C
+            App.helpers.setCode('stack', `void push(int val) {
+    Nodo* nuevo = (Nodo*)malloc(sizeof(Nodo));
+    nuevo->dato = ${val};
+    nuevo->siguiente = tope;
+    tope = nuevo;
+}`);
+            App.helpers.setStatus('stack', `Apilado: ${val}`);
+            input.value = ''; input.focus();
+        },
+
+        pop: () => {
+            if (App.state.pila.length === 0) return alert("Pila Vacía (Underflow)");
+
+            const val = App.state.pila[App.state.pila.length - 1]; // Último elemento
+            const container = document.getElementById('stack-container');
+            const node = container.lastElementChild; // Visualmente el de arriba
+
+            if (node) {
+                node.classList.add('removing');
+                setTimeout(() => {
+                    App.state.pila.pop();
+                    node.remove();
+                    App.helpers.setStatus('stack', `Desapilado: ${val}`);
+                }, 300);
+            }
+
+            App.helpers.setCode('stack', `int pop() {
+    if(!tope) return -1;
+    Nodo* temp = tope; // Dato: ${val}
+    tope = tope->siguiente;
+    free(temp);
+}`);
+        },
+
+        // Persistencia LOCAL
+        save: () => {
+            localStorage.setItem('mi_pila', JSON.stringify(App.state.pila));
+            alert("✅ Pila guardada en el dispositivo");
+        },
+        load: () => {
+            const data = localStorage.getItem('mi_pila');
+            if (!data) return alert("No hay pila guardada");
+            
+            App.state.pila = JSON.parse(data);
+            const container = document.getElementById('stack-container');
+            container.innerHTML = '';
+            
+            App.state.pila.forEach(val => {
+                const node = document.createElement('div');
+                node.className = 'stack-node';
+                node.innerText = val;
+                container.appendChild(node);
+            });
+            App.helpers.setStatus('stack', "Pila recuperada");
+        },
+        reset: () => {
+            if(!confirm("¿Borrar pila?")) return;
             App.state.pila = [];
             document.getElementById('stack-container').innerHTML = '';
-            App.setCode("// Pila reiniciada");
-            App.setStatus("Nueva pila lista");
+            localStorage.removeItem('mi_pila');
         }
     },
 
-    // --- PERSISTENCIA (FIREBASE) ---
-    
-    saveStack: () => {
-        if (!user || !db) { alert("Modo Offline: No se puede guardar en la nube."); return; }
-        
-        // Estructura: artifacts / {appId} / users / {uid} / data / saved_stack
-        const docRef = db.collection('artifacts').doc(appId)
-                         .collection('users').doc(user.uid)
-                         .collection('data').doc('saved_stack');
+    // ==========================================
+    // MÓDULO COLA (FIFO) - NUEVO
+    // ==========================================
+    cola: {
+        enqueue: () => {
+            const input = document.getElementById('queue-input');
+            const val = input.value.trim();
+            if (!val) return alert("Ingresa un valor");
 
-        docRef.set({
-            elements: App.state.pila,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        })
-        .then(() => {
-            App.setStatus("✅ Pila guardada en la nube");
-            alert("Pila guardada exitosamente");
-        })
-        .catch((err) => {
-            console.error(err);
-            alert("Error al guardar");
-        });
+            // 1. Lógica
+            App.state.cola.push(val);
+
+            // 2. Visual (Insertar al final = Derecha)
+            const node = document.createElement('div');
+            node.className = 'queue-node';
+            node.innerText = val;
+            document.getElementById('queue-container').appendChild(node);
+
+            // 3. Código C
+            App.helpers.setCode('queue', `void enqueue(int val) {
+    Nodo* nuevo = (Nodo*)malloc(sizeof(Nodo));
+    nuevo->dato = ${val};
+    nuevo->siguiente = NULL;
+    
+    if(final == NULL) 
+        frente = final = nuevo;
+    else {
+        final->siguiente = nuevo;
+        final = nuevo;
+    }
+}`);
+            App.helpers.setStatus('queue', `Encolado: ${val}`);
+            input.value = ''; input.focus();
+        },
+
+        dequeue: () => {
+            if (App.state.cola.length === 0) return alert("Cola Vacía (Underflow)");
+
+            const val = App.state.cola[0]; // Primer elemento
+            const container = document.getElementById('queue-container');
+            const node = container.firstElementChild; // El de la izquierda
+
+            if (node) {
+                node.classList.add('removing');
+                setTimeout(() => {
+                    App.state.cola.shift(); // Eliminar del inicio del array
+                    node.remove();
+                    App.helpers.setStatus('queue', `Atendido: ${val}`);
+                }, 300);
+            }
+
+            App.helpers.setCode('queue', `int dequeue() {
+    if(!frente) return -1;
+    Nodo* temp = frente; // Dato: ${val}
+    frente = frente->siguiente;
+    if(!frente) final = NULL;
+    free(temp);
+}`);
+        },
+
+        // Persistencia LOCAL
+        save: () => {
+            localStorage.setItem('mi_cola', JSON.stringify(App.state.cola));
+            alert("✅ Cola guardada en el dispositivo");
+        },
+        load: () => {
+            const data = localStorage.getItem('mi_cola');
+            if (!data) return alert("No hay cola guardada");
+            
+            App.state.cola = JSON.parse(data);
+            const container = document.getElementById('queue-container');
+            container.innerHTML = '';
+            
+            App.state.cola.forEach(val => {
+                const node = document.createElement('div');
+                node.className = 'queue-node';
+                node.innerText = val;
+                container.appendChild(node);
+            });
+            App.helpers.setStatus('queue', "Cola recuperada");
+        },
+        reset: () => {
+            if(!confirm("¿Borrar cola?")) return;
+            App.state.cola = [];
+            document.getElementById('queue-container').innerHTML = '';
+            localStorage.removeItem('mi_cola');
+        }
     },
 
-    loadStack: () => {
-        if (!user || !db) { alert("Modo Offline: No se puede cargar de la nube."); return; }
-
-        const docRef = db.collection('artifacts').doc(appId)
-                         .collection('users').doc(user.uid)
-                         .collection('data').doc('saved_stack');
-
-        docRef.get().then((doc) => {
-            if (doc.exists) {
-                const data = doc.data();
-                App.state.pila = data.elements || [];
-                App.renderFullStack();
-                App.setStatus("📂 Pila cargada desde la nube");
-                App.setCode("// Estructura recuperada del servidor");
-            } else {
-                alert("No hay una pila guardada previamente");
-            }
-        }).catch((err) => {
-            console.error(err);
-            alert("Error al cargar");
-        });
+    helpers: {
+        setCode: (type, code) => document.getElementById(`${type}-code`).innerText = code,
+        setStatus: (type, msg) => document.getElementById(`${type}-status`).innerText = msg
     }
 };
-
-// Mensaje inicial
-App.setCode("// Seleccione una operación para ver su código en C");
 
 
