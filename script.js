@@ -19,7 +19,7 @@ const App = {
     },
 
     // ==========================================
-    // MÓDULO PILA (LIFO)
+    //  PILA (LIFO)
     // ==========================================
     pila: {
         push: () => {
@@ -27,16 +27,16 @@ const App = {
             const val = input.value.trim();
             if (!val) return alert("Ingresa un valor");
 
-            // 1. Lógica
+            // Lógica real
             App.state.pila.push(val);
 
-            // 2. Visual (Insertar al final, CSS column-reverse lo pone arriba)
+            // Insertar al final, CSS column-reverse lo pone arriba
             const node = document.createElement('div');
             node.className = 'stack-node';
             node.innerText = val;
             document.getElementById('stack-container').appendChild(node);
 
-            // 3. Código C
+            // Mostrar el código C
             App.helpers.setCode('stack', `void push(int val) {
     Nodo* nuevo = (Nodo*)malloc(sizeof(Nodo));
     nuevo->dato = ${val};
@@ -71,10 +71,10 @@ const App = {
 }`);
         },
 
-        // Persistencia LOCAL
+        // Memoria LOCAL
         save: () => {
             localStorage.setItem('mi_pila', JSON.stringify(App.state.pila));
-            alert("✅ Pila guardada en el dispositivo");
+            alert("Pila guardada en la memoria del dispositivo");
         },
         load: () => {
             const data = localStorage.getItem('mi_pila');
@@ -101,7 +101,7 @@ const App = {
     },
 
     // ==========================================
-    // MÓDULO COLA (FIFO) - NUEVO
+    // COLA (FIFO)
     // ==========================================
     cola: {
         enqueue: () => {
@@ -109,16 +109,16 @@ const App = {
             const val = input.value.trim();
             if (!val) return alert("Ingresa un valor");
 
-            // 1. Lógica
+            // Lógica real
             App.state.cola.push(val);
 
-            // 2. Visual (Insertar al final = Derecha)
+            // Insertar al final = Derecha
             const node = document.createElement('div');
             node.className = 'queue-node';
             node.innerText = val;
             document.getElementById('queue-container').appendChild(node);
 
-            // 3. Código C
+            // Mostrar el código C
             App.helpers.setCode('queue', `void enqueue(int val) {
     Nodo* nuevo = (Nodo*)malloc(sizeof(Nodo));
     nuevo->dato = ${val};
@@ -160,10 +160,10 @@ const App = {
 }`);
         },
 
-        // Persistencia LOCAL
+        // Memoria LOCAL
         save: () => {
             localStorage.setItem('mi_cola', JSON.stringify(App.state.cola));
-            alert("✅ Cola guardada en el dispositivo");
+            alert("Cola guardada en la memoria del dispositivo");
         },
         load: () => {
             const data = localStorage.getItem('mi_cola');

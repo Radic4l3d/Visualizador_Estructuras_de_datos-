@@ -10,18 +10,18 @@
 
     <header>
         <div class="logo-area">
-            <h1>DataStructs<span>4CM2</span></h1>
+            <h1>Estructuras de datos<span>      4CM2</span></h1>
         </div>
         <nav>
-            <button class="nav-btn active" onclick="App.navigate('pila', event)">Pila (LIFO)</button>
-            <button class="nav-btn" onclick="App.navigate('cola', event)">Cola (FIFO)</button>
+            <button class="nav-btn active" onclick="App.navigate('pila', event)">Pila</button>
+            <button class="nav-btn" onclick="App.navigate('cola', event)">Cola</button>
             <button class="nav-btn" onclick="App.navigate('lista', event)">Lista</button>
         </nav>
     </header>
 
     <main>
         
-        <!-- === SECCIÓN PILA (Stack) === -->
+        <!-- PILA (LIFO) -->
         <section id="pila-section" class="section-container active">
             <div class="control-panel">
                 <div class="card">
@@ -35,10 +35,10 @@
                     <div class="separator"></div>
 
                     <div class="input-group-row">
-                        <button class="btn-secondary" onclick="App.pila.save()">💾 Guardar</button>
-                        <button class="btn-secondary" onclick="App.pila.load()">📂 Cargar</button>
+                        <button class="btn-secondary" onclick="App.pila.save()">Guardar</button>
+                        <button class="btn-secondary" onclick="App.pila.load()">Cargar</button>
                     </div>
-                    <button class="btn-secondary full-width" onclick="App.pila.reset()">🗑️ Limpiar Pila</button>
+                    <button class="btn-secondary full-width" onclick="App.pila.reset()">Limpiar Pila</button>
                     
                     <div id="stack-status" class="status-bar">Listo</div>
                 </div>
@@ -51,12 +51,12 @@
 
             <div class="visual-panel">
                 <div id="stack-container"></div>
-                <div class="label-bottom">INICIO (Fondo)</div>
-                <div class="label-top">FIN (Tope)</div>
+                <div class="label-bottom">INICIO</div>
+                <div class="label-top">FIN</div>
             </div>
         </section>
 
-        <!-- === SECCIÓN COLA (Queue) === -->
+        <!-- COLA (Queue) -->
         <section id="cola-section" class="section-container">
             <div class="control-panel">
                 <div class="card">
@@ -70,10 +70,10 @@
                     <div class="separator"></div>
 
                     <div class="input-group-row">
-                        <button class="btn-secondary" onclick="App.cola.save()">💾 Guardar</button>
-                        <button class="btn-secondary" onclick="App.cola.load()">📂 Cargar</button>
+                        <button class="btn-secondary" onclick="App.cola.save()">Guardar</button>
+                        <button class="btn-secondary" onclick="App.cola.load()">Cargar</button>
                     </div>
-                    <button class="btn-secondary full-width" onclick="App.cola.reset()">🗑️ Limpiar Cola</button>
+                    <button class="btn-secondary full-width" onclick="App.cola.reset()"> Limpiar Cola</button>
                     
                     <div id="queue-status" class="status-bar">Listo</div>
                 </div>
@@ -85,19 +85,18 @@
             </div>
 
             <div class="visual-panel">
-                <!-- Contenedor Horizontal -->
                 <div id="queue-container"></div>
-                <div class="label-left">INICIO (Frente)</div>
-                <div class="label-right">FIN (Final)</div>
+                <div class="label-left">INICIO</div>
+                <div class="label-right">FIN</div>
             </div>
         </section>
 
-        <!-- === SECCIÓN LISTA (Pendiente) === -->
+        <!-- LISTA -->
         <section id="lista-section" class="section-container">
             <div class="visual-panel empty-state">
                 <div class="placeholder-text">
-                    🚧 Módulo de Lista Enlazada<br>
-                    <span>Pendiente de implementación</span>
+                    Lista Enlazada - Pendiente<br>
+                    <span>awantar</span>
                 </div>
             </div>
         </section>
